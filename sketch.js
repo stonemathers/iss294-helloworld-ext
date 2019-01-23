@@ -5,7 +5,7 @@ var sizes = [];
 var directions = [];
 var startSize = 140;
 var CANVAS_WIDTH = 1200;
-var CANVAS_HEIGHT = 700;
+var CANVAS_HEIGHT = 650;
 
 //Constants to determine the direction that a letter is travelling
 var DIAG_UL = 0;
