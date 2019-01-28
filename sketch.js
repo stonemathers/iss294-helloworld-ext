@@ -1,11 +1,18 @@
+//Canvas constants
+var CANVAS_WIDTH = 1200;
+var CANVAS_HEIGHT = 650;
+
+//Variables for letters
 var letters = [];
 var locX = [];
 var locY = [];
 var sizes = [];
 var directions = [];
 var startSize = 140;
-var CANVAS_WIDTH = 1200;
-var CANVAS_HEIGHT = 650;
+
+//Animation Constants
+var SPEED_MAX = 50;
+var BGCOLOR_DIV = 80;
 
 //Constants to determine the direction that a letter is travelling
 var DIAG_UL = 0;
@@ -13,18 +20,50 @@ var DIAG_UR = 1;
 var DIAG_DL = 2;
 var DIAG_DR = 3;
 
+//Variables for circle
+var circleDx = 1;
+var circleDy = 1;
+var circleSpeed = 0
+var circleX = CANVAS_WIDTH/2;
+var circleY = CANVAS_HEIGHT/2;
+var CIRCLE_W = 30;
+var CIRCLE_H = circleW;
+
 function setup(){
     createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
     noCursor();
 }
 
 function draw(){
-    //Draw background
-    background("black");
+    numLet = letters.length/4;
 
-    //Draw cursor
+    //Draw background
+    fromBG = color('black');
+    toBG = color('white');
+    bgColor = fromBG;
+    if(numLet > 0){
+        bgColor = lerpColor(fromBG, toBG, numLet/BGCOLOR_DIV);
+    }
+    background(bgColor);
+
+    //Adjust circle speed
+    circleSpeed = Math.min(numLet, SPEED_MAX);
+
+    //Adjust circle direction
+    if(circleX >= CANVAS_WIDTH || circleX <= 0){
+        circleDx *= -1;
+    }
+    if(circleY >= CANVAS_HEIGHT || circleY <= 0){
+        circleDy *= -1;
+    }
+
+    //Set circle position
+    circleX += circleSpeed * circleDx;
+    circleY += circleSpeed * circleDy;
+
+    //Draw circle
     fill("white");
-    ellipse(mouseX, mouseY, 30, 30);
+    ellipse(circleX, circleY, CIRCLE_W, CIRCLE_H);
 
     //Draw letters
     for(i = 0; i < letters.length; i+=4){
@@ -83,6 +122,7 @@ function draw(){
 
             sizes.splice(i, 4, size - 1, size - 1, size - 1, size - 1);
         }else{
+            //Remove letters with size 0
             letters.splice(i, 4);
             locX.splice(i, 4);
             locY.splice(i, 4);
@@ -91,15 +131,14 @@ function draw(){
             i -= 4;
         }
     }
-
 }
 
 function keyPressed(){
     if(key.length == 1){
         for(i = 0; i < 4; i++){
             letters.push(key);
-            locX.push(mouseX);
-            locY.push(mouseY);
+            locX.push(circleX);
+            locY.push(circleY);
             sizes.push(startSize);
         }
     directions.push(DIAG_UL);
